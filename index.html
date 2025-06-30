@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Çerçeve Kolaj</title>
+  <style>
+    body { font-family: sans-serif; text-align: center; background-color: #f0f0f0; }
+    #canvas { margin-top: 20px; border: 2px solid #ccc; max-width: 90%; }
+    .btn { margin: 10px; padding: 10px 20px; font-size: 16px; cursor: pointer; }
+  </style>
+</head>
+<body>
+  <h2>📸 Çerçeve Kolaj</h2>
+  <p>Fotoğrafını seç, çerçeveyi ekle ve indir!</p>
+
+  <input type="file" accept="image/*" id="upload" class="btn" /><br />
+  <canvas id="canvas"></canvas><br />
+  <button class="btn" onclick="downloadImage()">📥 İndir</button>
+
+  <script>
+    const upload = document.getElementById('upload');
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+
+    const frame = new Image();
+    frame.src = 'https://i.imgur.com/o3Q8WFr.png';
+
+    upload.addEventListener('change', function (e) {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function (event) {
+        const img = new Image();
+        img.onload = function () {
+          canvas.width = img.width;
+          canvas.height = img.height;
+          ctx.drawImage(img, 0, 0);
+
+          frame.onload = function () {
+            ctx.drawImage(frame, 0, 0, img.width, img.height);
+          };
+          ctx.drawImage(frame, 0, 0, img.width, img.height);
+        };
+        img.src = event.target.result;
+      };
+      reader.readAsDataURL(file);
+    });
+
+    function downloadImage() {
+      const link = document.createElement('a');
+      link.download = 'cerceve_kolaj.png';
+      link.href = canvas.toDataURL();
+      link.click();
+    }
+  </script>
+</body>
+</html>
